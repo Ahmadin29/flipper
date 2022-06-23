@@ -57,15 +57,15 @@ export default class Cube extends Component {
     zindex = matrix[5] <= 0 ? 2 : 1;
     this.refViewBack.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix},{rotateX:"180deg"},{rotateY:"180deg"}]}});
 
-    matrix = rotateXY(0 + 90, dy);
-    transformOrigin(matrix, origin);
-    zindex = matrix[5] <= 0 ? 1 : 2;
-    this.refViewRight.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+    // matrix = rotateXY(0 + 90, dy);
+    // transformOrigin(matrix, origin);
+    // zindex = matrix[5] <= 0 ? 1 : 2;
+    // this.refViewRight.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
-    matrix = rotateXY(0 - 90, dy);
-    transformOrigin(matrix, origin);
-    zindex = matrix[5] <= 0 ? 1 : 2;
-    this.refViewLeft.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+    // matrix = rotateXY(0 - 90, dy);
+    // transformOrigin(matrix, origin);
+    // zindex = matrix[5] <= 0 ? 1 : 2;
+    // this.refViewLeft.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
     matrix = rotateXZ(0, dy - 90);
     transformOrigin(matrix, origin);
@@ -78,29 +78,29 @@ export default class Cube extends Component {
     this.refViewBottom.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
   }
 
-  renderLeft(color) {
-    return (
-      <View
-        ref={component => this.refViewRight = component}
-        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
-        {...this.panResponder.panHandlers}
-      >
-        <Text>Left</Text>
-      </View>
-    )
-  }
+  // renderLeft(color) {
+  //   return (
+  //     <View
+  //       ref={component => this.refViewRight = component}
+  //       style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+  //       {...this.panResponder.panHandlers}
+  //     >
+  //       <Text>Left</Text>
+  //     </View>
+  //   )
+  // }
 
-  renderRight(color) {
-    return (
-      <View
-        ref={component => this.refViewLeft = component}
-        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
-        {...this.panResponder.panHandlers}
-      >
-        <Text>Right</Text>
-      </View>
-    )
-  }
+  // renderRight(color) {
+  //   return (
+  //     <View
+  //       ref={component => this.refViewLeft = component}
+  //       style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+  //       {...this.panResponder.panHandlers}
+  //     >
+  //       <Text>Right</Text>
+  //     </View>
+  //   )
+  // }
 
   renderFront(color) {
     return (
@@ -153,8 +153,8 @@ export default class Cube extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.renderRight('#e5afb9')}
-        {this.renderLeft('#b5bce2')}
+        {/* {this.renderRight('#e5afb9')}
+        {this.renderLeft('#b5bce2')} */}
         {this.renderBack('#8697df')}
         {this.renderFront('#4c72e0')}
         {this.renderTop('#de7c92')}
