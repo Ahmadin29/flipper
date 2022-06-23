@@ -13,7 +13,6 @@ const WIDTH = Dimensions.get('window').width;
 
 const styles = {
   container: {
-    position: 'absolute',
     left: WIDTH / 2 - 50,
     top: HEIGHT / 2 - 50,
     width: 100,
@@ -37,6 +36,16 @@ export default class Cube extends Component {
 
     super(props);
 
+    // index
+    // 0 = front side
+    // 1 = bottom side
+    // 2 = back side
+    // 3 = top side
+
+    this.state = {
+      index : 0
+    }
+
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: this.handlePanResponderMove.bind(this)
@@ -50,12 +59,34 @@ export default class Cube extends Component {
     let matrix = rotateXY(0, dy);
     transformOrigin(matrix, origin);
     let zindex = matrix[5] <= 0 ? 1 : 2;
+
+    const posFront = matrix[5];
+
     this.refViewFront.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
     matrix = rotateXY(0 + 180, dy);
     transformOrigin(matrix, origin);
     zindex = matrix[5] <= 0 ? 2 : 1;
+    
+    const posBack = matrix[5];
+
     this.refViewBack.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix},{rotateX:"180deg"},{rotateY:"180deg"}]}});
+
+    matrix = rotateXZ(0, dy - 90);
+    transformOrigin(matrix, origin);
+    zindex = matrix[5] <= 0 ? 1 : 2;
+    
+    const posTop = matrix[5];
+
+    this.refViewTop.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+
+    matrix = rotateXZ(-0, dy + 90);
+    transformOrigin(matrix, origin);
+    zindex = matrix[5] <= 0 ? 1 : 2;
+    
+    const posBottom = matrix[5];
+
+    this.refViewBottom.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
     // matrix = rotateXY(0 + 90, dy);
     // transformOrigin(matrix, origin);
@@ -66,16 +97,23 @@ export default class Cube extends Component {
     // transformOrigin(matrix, origin);
     // zindex = matrix[5] <= 0 ? 1 : 2;
     // this.refViewLeft.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+    
 
-    matrix = rotateXZ(0, dy - 90);
-    transformOrigin(matrix, origin);
-    zindex = matrix[5] <= 0 ? 1 : 2;
-    this.refViewTop.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+    // You can change the key with what you need
+    const index = {
 
-    matrix = rotateXZ(-0, dy + 90);
-    transformOrigin(matrix, origin);
-    zindex = matrix[5] <= 0 ? 1 : 2;
-    this.refViewBottom.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
+      // example
+      // A:posTop
+
+      top:posTop,
+      front:posFront,
+      bottom:posBottom,
+      back:posBack*-1,
+    }
+
+    this.setState({
+      index:index
+    })
   }
 
   // renderLeft(color) {
@@ -149,16 +187,47 @@ export default class Cube extends Component {
       </View>
     )
   }
+  
+  getFrontSide(){
+
+    const pos = this.state.index;
+    const values = Object.values(pos);
+    const keys = Object.keys(pos);
+
+    const max = Math.max(...values);
+
+    const front = keys.filter(key => {
+      if (pos[key] == max) {
+        return key
+      }
+    })
+
+    return front[0]+" is on the front"
+  }
 
   render() {
     return (
-      <View style={styles.container}>
-        {/* {this.renderRight('#e5afb9')}
-        {this.renderLeft('#b5bce2')} */}
-        {this.renderBack('#8697df')}
-        {this.renderFront('#4c72e0')}
-        {this.renderTop('#de7c92')}
-        {this.renderBottom('#d1426b')}
+      <View>
+        <View style={styles.container}>
+          {/* {this.renderRight('#e5afb9')}
+          {this.renderLeft('#b5bce2')} */}
+          {this.renderBack('#8697df')}
+          {this.renderFront('#4c72e0')}
+          {this.renderTop('#de7c92')}
+          {this.renderBottom('#d1426b')}
+        </View>
+        <View style={{
+          zIndex:1000,
+        }} >
+        <Text>Position</Text>
+        <Text>
+          {
+            JSON.stringify(this.state.index)
+          }
+        </Text>
+        <Text>On Front</Text>
+        <Text>{this.getFrontSide()}</Text>
+        </View>
       </View>
     );
   }
