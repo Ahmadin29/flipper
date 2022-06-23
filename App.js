@@ -1,47 +1,139 @@
-import React, { Component } from "react";
-import * as THREE from "three";
-import { Renderer,TextureLoader } from 'expo-three';
-import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import React, { Component, PropTypes } from 'react';
+import {
+  Dimensions,
+  PanResponder,
+  View
+} from 'react-native';
+import { transformOrigin, rotateXY, rotateXZ } from './utils';
 
+const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('window').width;
 
-export default function App(params) {
+const styles = {
+  container: {
+    position: 'absolute',
+    left: WIDTH / 2 - 50,
+    top: HEIGHT / 2 - 50,
+    width: 100,
+    height: 100,
+    backgroundColor: "transparent"
+  },
+  rectangle: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 100,
+    height: 100,
+    zIndex: 10
+  }
+};
 
-  const _onGLContextCreate = async gl => {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      200, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000
-    );
-    const renderer = new Renderer({ gl });
-    renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-    const geometry = new THREE.SphereBufferGeometry(1, 36, 36);
-    const material = new THREE.MeshBasicMaterial({
-      map: new TextureLoader().load(require('./assets/texture.png'))
+export default class Cube extends Component {
+  componentWillMount() {
+    this.panResponder = PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: this.handlePanResponderMove.bind(this)
     });
-    const sphere = new THREE.Mesh(geometry, material); 
-    
-    scene.add(sphere);
-    camera.position.z = 2;
-    const render = () => {
-      requestAnimationFrame(render);
-      sphere.rotation.x += 0.01;
-      sphere.rotation.y += 0.01;
-      renderer.render(scene, camera);
-      gl.endFrameEXP();
-    };
-    render();
-  };
+  }
 
+  handlePanResponderMove (e, gestureState) {
+    const { dx, dy } = gestureState;
+    const origin = { x: 0, y: 0, z: -50 };
+    let matrix = rotateXY(dx, dy);
+    transformOrigin(matrix, origin);
+    this.refViewFront.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
 
-  return(
-    <GLView
-      style={{ flex: 1 }}
-      onContextCreate={_onGLContextCreate}
-    >
+    matrix = rotateXY(dx + 180, dy);
+    transformOrigin(matrix, origin);
+    this.refViewBack.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
 
-    </GLView>
-  )
+    matrix = rotateXY(dx + 90, dy);
+    transformOrigin(matrix, origin);
+    this.refViewRight.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
+
+    matrix = rotateXY(dx - 90, dy);
+    transformOrigin(matrix, origin);
+    this.refViewLeft.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
+
+    matrix = rotateXZ(dx, dy - 90);
+    transformOrigin(matrix, origin);
+    this.refViewTop.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
+
+    matrix = rotateXZ(-dx, dy + 90);
+    transformOrigin(matrix, origin);
+    this.refViewBottom.setNativeProps({style: {transform: [{perspective: 1000}, {matrix: matrix}]}});
+  }
+
+  renderLeft(color) {
+    return (
+      <View
+        ref={component => this.refViewRight = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  renderRight(color) {
+    return (
+      <View
+        ref={component => this.refViewLeft = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  renderFront(color) {
+    return (
+      <View
+        ref={component => this.refViewFront = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  renderBack(color) {
+    return (
+      <View
+        ref={component => this.refViewBack = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  renderTop(color) {
+    return (
+      <View
+        ref={component => this.refViewTop = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  renderBottom(color) {
+    return (
+      <View
+        ref={component => this.refViewBottom = component}
+        style={[styles.rectangle, (color) ? {backgroundColor: color} : null]}
+        {...this.panResponder.panHandlers}
+      />
+    )
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        {this.renderFront('#4c72e0')}
+        {this.renderBack('#8697df')}
+        {this.renderLeft('#b5bce2')}
+        {this.renderRight('#e5afb9')}
+        {this.renderTop('#de7c92')}
+        {this.renderBottom('#d1426b')}
+      </View>
+    );
+  }
 }
