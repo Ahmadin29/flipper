@@ -56,10 +56,12 @@ export default class Cube extends Component {
     const { dx, dy } = gestureState;
 
     const origin = { x: 0, y: 0, z: -50 };
+
+    
     let matrix = rotateXY(0, dy);
     transformOrigin(matrix, origin);
     let zindex = matrix[5] <= 0 ? 1 : 2;
-
+    const mFront = matrix;
     const posFront = matrix[5];
 
     this.refViewFront.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
@@ -67,7 +69,7 @@ export default class Cube extends Component {
     matrix = rotateXY(0 + 180, dy);
     transformOrigin(matrix, origin);
     zindex = matrix[5] <= 0 ? 2 : 1;
-    
+    const mBack = matrix;
     const posBack = matrix[5];
 
     this.refViewBack.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix},{rotateX:"180deg"},{rotateY:"180deg"}]}});
@@ -75,17 +77,15 @@ export default class Cube extends Component {
     matrix = rotateXZ(0, dy - 90);
     transformOrigin(matrix, origin);
     zindex = matrix[5] <= 0 ? 1 : 2;
-    
+    const mTop = matrix;
     const posTop = matrix[5];
-
     this.refViewTop.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
     matrix = rotateXZ(-0, dy + 90);
     transformOrigin(matrix, origin);
     zindex = matrix[5] <= 0 ? 1 : 2;
-    
+    const mBottom = matrix;
     const posBottom = matrix[5];
-
     this.refViewBottom.setNativeProps({style: {zIndex:zindex,transform: [{perspective: 1000}, {matrix: matrix}]}});
 
     // matrix = rotateXY(0 + 90, dy);
@@ -110,6 +110,15 @@ export default class Cube extends Component {
       bottom:posBottom,
       back:posBack*-1,
     }
+
+    const m = {
+      top : mTop,
+      front : mFront,
+      bottom : mBottom,
+      back : mBack,
+    }
+
+    // console.log(m);
 
     this.setState({
       index:index
