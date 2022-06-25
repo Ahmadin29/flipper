@@ -41,6 +41,40 @@ export default function App(params) {
         setPosX(posX + 80)
     }
 
+    const scrollDown = ()=>{
+        const origin = { x: 0, y: 0, z: -50 };
+
+        let matrix = rotateXY(0, posX - 80);
+        transformOrigin(matrix, origin);
+        let zindex = matrix[5] <= 0 ? 1 : 2;
+        zFront.value = zindex;
+        // console.log('front',matrix[5]);
+        matrixFront.value = matrix;
+
+        matrix = rotateXY(0, posX - 80 - 90);
+        transformOrigin(matrix, origin);
+        zindex = matrix[5] <= 0 ? 1 : 2;
+        zTop.value = zindex;
+        // console.log('top',matrix[5]);
+        matrixTop.value = matrix;
+
+        matrix = rotateXZ(0, posX - 80 + 90);
+        transformOrigin(matrix, origin);
+        zindex = matrix[5] <= 0 ? 1 : 2;
+        // console.log('bottom',matrix[5]);
+        zBottom.value = zindex;
+        matrixBottom.value = matrix;
+
+        matrix = rotateXY(0 + 180, posX - 80);
+        transformOrigin(matrix, origin);
+        zindex = matrix[5] <= 0 ? 2 : 1;
+        // console.log('back',matrix[5]);
+        zBack.value = zindex;
+        matrixBack.value = matrix;
+
+        setPosX(posX - 80)
+    }
+
     // Front Side Start
     const frontRef = useRef();
     const matrixFront = useSharedValue(
@@ -232,22 +266,17 @@ export default function App(params) {
 
     const backSide = ()=>{
         return(
-            <View style={{
-                zIndex:200,
-                position:"absolute"
-            }} >
-                <Animated.View
-                ref={backRef}
-                style={[
-                    styles.rectangle,
-                    {
-                        backgroundColor:"yellow",
-                    },
-                    mBackStyle
-                ]} >
-                    <Text>Back</Text>
-                </Animated.View>
-            </View>
+            <Animated.View
+            ref={backRef}
+            style={[
+                styles.rectangle,
+                {
+                    backgroundColor:"yellow",
+                },
+                mBackStyle
+            ]} >
+                <Text>Back</Text>
+            </Animated.View>
         )
     }
     // Back side end
@@ -265,7 +294,7 @@ export default function App(params) {
                 backgroundColor:"blue",
                 paddingHorizontal:30,
             }} onPress={()=>{
-                scrollUp();
+                scrollDown();
             }} >
                 <Text style={{color:"white"}} >Scroll Up</Text>
             </TouchableOpacity>
@@ -286,6 +315,8 @@ export default function App(params) {
                 padding:10,
                 backgroundColor:"blue",
                 paddingHorizontal:30,
+            }} onPress={()=>{
+                scrollUp()
             }} >
                 <Text style={{color:"white"}} >Scroll Down</Text>
             </TouchableOpacity>
