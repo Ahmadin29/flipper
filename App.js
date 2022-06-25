@@ -228,14 +228,14 @@ export default class Cube extends Component {
         <View style={{
           zIndex:1000,
         }} >
-        <Text>Position</Text>
-        <Text>
-          {
-            JSON.stringify(this.state.index)
-          }
-        </Text>
-        <Text>On Front</Text>
-        <Text>{this.getFrontSide()}</Text>
+          <Text>Position</Text>
+          <Text>
+            {
+              JSON.stringify(this.state.index)
+            }
+          </Text>
+          <Text>On Front</Text>
+          <Text>{this.getFrontSide()}</Text>
         </View>
       </View>
     );

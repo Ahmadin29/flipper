@@ -5,74 +5,103 @@ import { rotateXY, rotateXZ, transformOrigin } from "./Utils";
 
 export default function App(params) {
 
-    const [posX,setPosX] = useState(0)
+    const [posX,setPosX] = useState(20);
+    const [index,setIndex] = useState({});
 
     const scrollUp = ()=>{
         const origin = { x: 0, y: 0, z: -50 };
 
-        let matrix = rotateXY(0, posX + 80);
+        let matrix = rotateXY(0, posX + 90);
         transformOrigin(matrix, origin);
         let zindex = matrix[5] <= 0 ? 1 : 2;
         zFront.value = zindex;
-        // console.log('front',matrix[5]);
+        const posFront = matrix[5];
         matrixFront.value = matrix;
 
-        matrix = rotateXY(0, posX + 80 - 90);
+        matrix = rotateXY(0, posX + 90 - 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 1 : 2;
         zTop.value = zindex;
-        // console.log('top',matrix[5]);
+        const posTop = matrix[5];
         matrixTop.value = matrix;
 
-        matrix = rotateXZ(0, posX + 80 + 90);
+        matrix = rotateXZ(0, posX + 90 + 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 1 : 2;
-        // console.log('bottom',matrix[5]);
+        const posBottom = matrix[5];
         zBottom.value = zindex;
         matrixBottom.value = matrix;
 
-        matrix = rotateXY(0 + 180, posX + 80);
+        matrix = rotateXY(0 + 180, posX + 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 2 : 1;
-        // console.log('back',matrix[5]);
+        const posBack = matrix[5];
         zBack.value = zindex;
         matrixBack.value = matrix;
 
-        setPosX(posX + 80)
+        setPosX(posX + 90)
+
+        // You can change the key with what you need
+        const data = {
+
+            // example
+            // A:posTop
+    
+            top:posTop,
+            front:posFront,
+            bottom:posBottom,
+            back:posBack*-1,
+        }
+
+        setIndex(data);
     }
 
     const scrollDown = ()=>{
         const origin = { x: 0, y: 0, z: -50 };
 
-        let matrix = rotateXY(0, posX - 80);
+        let matrix = rotateXY(0, posX - 90);
         transformOrigin(matrix, origin);
         let zindex = matrix[5] <= 0 ? 1 : 2;
         zFront.value = zindex;
-        // console.log('front',matrix[5]);
+        const posFront = matrix[5];
         matrixFront.value = matrix;
 
-        matrix = rotateXY(0, posX - 80 - 90);
+        matrix = rotateXY(0, posX - 90 - 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 1 : 2;
         zTop.value = zindex;
-        // console.log('top',matrix[5]);
+        const posTop = matrix[5];
         matrixTop.value = matrix;
 
-        matrix = rotateXZ(0, posX - 80 + 90);
+        matrix = rotateXZ(0, posX - 90 + 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 1 : 2;
-        // console.log('bottom',matrix[5]);
+        const posBottom = matrix[5];
         zBottom.value = zindex;
         matrixBottom.value = matrix;
 
-        matrix = rotateXY(0 + 180, posX - 80);
+        matrix = rotateXY(0 + 180, posX - 90);
         transformOrigin(matrix, origin);
         zindex = matrix[5] <= 0 ? 2 : 1;
-        // console.log('back',matrix[5]);
+        const posBack = matrix[5];
         zBack.value = zindex;
         matrixBack.value = matrix;
 
-        setPosX(posX - 80)
+        // You can change the key with what you need
+        const data = {
+
+            // example
+            // A:posTop
+    
+            top:posTop,
+            front:posFront,
+            bottom:posBottom,
+            back:posBack*-1,
+        }
+
+        setIndex(data);
+
+        setPosX(posX - 90)
     }
 
     // Front Side Start
@@ -281,6 +310,22 @@ export default function App(params) {
     }
     // Back side end
 
+    const getFrontSide = ()=>{
+        const pos = index;
+        const values = Object.values(pos);
+        const keys = Object.keys(pos);
+
+        const max = Math.max(...values);
+
+        const front = keys.filter(key => {
+        if (pos[key] == max) {
+            return key
+        }
+        })
+
+        return front[0]+" is on the front"
+    }
+
     return(
         <View style={{
             flex:1,
@@ -288,6 +333,19 @@ export default function App(params) {
             alignItems:"center"
         }} >
             <StatusBar barStyle="dark-content" />
+
+            <View style={{
+            zIndex:1000,
+            }} >
+                <Text>Position</Text>
+                <Text>
+                    {
+                        JSON.stringify(index)
+                    }
+                </Text>
+                <Text>On Front</Text>
+                <Text>{getFrontSide()}</Text>
+            </View>
 
             <TouchableOpacity style={{
                 padding:10,
